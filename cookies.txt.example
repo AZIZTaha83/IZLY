@@ -1,0 +1,4 @@
+.ASPXAUTH
+ASP.NET_SessionId
+ApplicationGatewayAffinity
+ApplicationGatewayAffinityCORS

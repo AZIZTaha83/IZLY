@@ -1,0 +1,4 @@
+requests==2.32.3
+Pillow==10.4.0
+pyzbar==0.1.9
+cryptography==42.0.8

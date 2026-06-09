@@ -1,0 +1,9 @@
+izly_qr.png
+izly.pkpass
+cookies.txt
+*.pyc
+__pycache__/
+login_page.html
+genqr_page.html
+codePad.js
+_inspect.py
