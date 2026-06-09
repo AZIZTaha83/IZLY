@@ -95,8 +95,9 @@ def login(cookies: dict, csrf: str, username: str, password: str) -> dict:
     if ".ASPXAUTH" not in response.cookies:
         raise PermissionError("Login failed – invalid credentials")
 
-    cookies[".ASPXAUTH"] = response.cookies[".ASPXAUTH"]
-    return cookies
+    auth_cookies = dict(cookies)
+    auth_cookies[".ASPXAUTH"] = response.cookies[".ASPXAUTH"]
+    return auth_cookies
 
 
 @_step("Generating QR codes")
@@ -123,13 +124,17 @@ def fetch_qrcodes(cookies: dict, count: int) -> list[dict]:
     return response.json()
 
 
+# Each QR code is given a margin equal to 1/8 of its side length for visual spacing.
+MARGIN_DIVISOR = 8
+
+
 @_step("Saving image")
 def save_qrcodes(qrcode_list: list[dict], output: str, size: int) -> None:
     """
     Decode all QR codes from their base64 data-URIs, lay them out
     side-by-side and write the result to *output*.
     """
-    margin = size // 8
+    margin = size // MARGIN_DIVISOR
     cell = size + margin * 2
     canvas = Image.new("RGB", (len(qrcode_list) * cell, cell), (255, 255, 255))
 
@@ -205,8 +210,8 @@ def main() -> None:
         args.password = getpass("Izly password: ")
 
     cookies, csrf = get_csrf()
-    session = login(cookies, csrf, args.username, args.password)
-    qrcodes = fetch_qrcodes(session, args.codes)
+    auth_cookies = login(cookies, csrf, args.username, args.password)
+    qrcodes = fetch_qrcodes(auth_cookies, args.codes)
     save_qrcodes(qrcodes, args.output, args.size)
 
 
